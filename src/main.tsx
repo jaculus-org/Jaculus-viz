@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 // Import the generated route tree
+import { DeviceProvider } from '@/context/device'
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
@@ -19,7 +20,9 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <DeviceProvider>
+        <RouterProvider router={router} />
+      </DeviceProvider>
     </ThemeProvider>
   </StrictMode>
 )
