@@ -1,13 +1,16 @@
 import { useDevice } from '@/context/device/useDevice'
-import { WebSerialStream } from '@/jac/jac-impl/WebSerialStream.ts'
+import {
+  StreamFactory,
+  type ConnectionType as StreamConnectionType,
+} from '@/jac/jac-impl/StreamFactory.ts'
 import { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 import { Bluetooth, Power, PowerSettingsNew, Usb } from '@mui/icons-material'
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import type { FC } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-type ConnectionType = 'serial' | 'ble'
+type ConnectionType = StreamConnectionType
 
 export interface ConnectionControlProps {
   onConnectionChange?: (connected: boolean) => void
@@ -16,56 +19,68 @@ export interface ConnectionControlProps {
 const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) => {
   const { setNewDevice, disconnectDevice, device } = useDevice()
   const { enqueueSnackbar } = useSnackbar()
+
   const [connectionType, setConnectionType] = useState<ConnectionType>('serial')
   const [isConnecting, setIsConnecting] = useState(false)
+  const [supportedTypes, setSupportedTypes] = useState<ConnectionType[]>([])
 
-  const connectSerial = async () => {
+  // Load connection type from URL parameter and update URL when changed
+  useEffect(() => {
+    const types = StreamFactory.getSupportedTypes()
+    setSupportedTypes(types)
+
+    // Get connection type from URL parameter
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlConnectionType = urlParams.get('connectionType') as ConnectionType
+
+    if (urlConnectionType && types.includes(urlConnectionType)) {
+      setConnectionType(urlConnectionType)
+    } else if (types.length > 0) {
+      // Set default connection type to the first supported one
+      const defaultType = types[0]
+      setConnectionType(defaultType)
+      // Update URL with default connection type
+      updateURLParameter('connectionType', defaultType)
+    }
+  }, [])
+
+  // Helper function to update URL parameter
+  const updateURLParameter = (key: string, value: string) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set(key, value)
+    window.history.replaceState({}, '', url.toString())
+  }
+
+  // Update URL when connection type changes
+  const handleConnectionTypeChange = (newConnectionType: ConnectionType) => {
+    setConnectionType(newConnectionType)
+    updateURLParameter('connectionType', newConnectionType)
+  }
+
+  const connectDevice = async () => {
     try {
       setIsConnecting(true)
 
-      if (!navigator.serial) {
-        throw new Error('Web Serial API is not supported in this browser')
-      }
-
-      const port = await navigator.serial.requestPort()
-      await port.open({ baudRate: 921600 })
-
-      const stream = new WebSerialStream(port)
+      const stream = await StreamFactory.createStream(connectionType)
       const jacDevice = new JacDevice(stream)
 
       setNewDevice(jacDevice)
       onConnectionChange?.(true)
-      enqueueSnackbar('Successfully connected via Serial', { variant: 'success' })
+      enqueueSnackbar(`Successfully connected via ${connectionType.toUpperCase()}`, {
+        variant: 'success',
+      })
     } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : 'Failed to connect via Serial'
+      const errorMessage =
+        e instanceof Error ? e.message : `Failed to connect via ${connectionType.toUpperCase()}`
       enqueueSnackbar(errorMessage, { variant: 'error' })
-      console.error('Serial connection error:', e)
-    } finally {
-      setIsConnecting(false)
-    }
-  }
-
-  const connectBLE = async () => {
-    try {
-      setIsConnecting(true)
-
-      // TODO: Implement BLE connection
-      throw new Error('Bluetooth connection is not yet implemented')
-    } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : 'Failed to connect via Bluetooth'
-      enqueueSnackbar(errorMessage, { variant: 'error' })
-      console.error('BLE connection error:', e)
+      console.error(`${connectionType} connection error:`, e)
     } finally {
       setIsConnecting(false)
     }
   }
 
   const handleConnect = () => {
-    if (connectionType === 'serial') {
-      connectSerial()
-    } else {
-      connectBLE()
-    }
+    connectDevice()
   }
 
   const handleDisconnect = () => {
@@ -86,20 +101,31 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
         <Select
           value={connectionType}
           label="Connection"
-          onChange={e => setConnectionType(e.target.value as ConnectionType)}
+          onChange={e => handleConnectionTypeChange(e.target.value as ConnectionType)}
         >
-          <MenuItem value="serial">
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Usb fontSize="small" />
-              <Typography variant="body2">Serial</Typography>
-            </Box>
-          </MenuItem>
-          <MenuItem value="ble">
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Bluetooth fontSize="small" />
-              <Typography variant="body2">Bluetooth</Typography>
-            </Box>
-          </MenuItem>
+          {supportedTypes.includes('serial') && (
+            <MenuItem value="serial">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Usb fontSize="small" />
+                <Typography variant="body2">Serial</Typography>
+              </Box>
+            </MenuItem>
+          )}
+          {supportedTypes.includes('ble') && (
+            <MenuItem value="ble">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Bluetooth fontSize="small" />
+                <Typography variant="body2">Bluetooth</Typography>
+              </Box>
+            </MenuItem>
+          )}
+          {supportedTypes.length === 0 && (
+            <MenuItem disabled>
+              <Typography variant="body2" color="text.secondary">
+                No supported connection types
+              </Typography>
+            </MenuItem>
+          )}
         </Select>
       </FormControl>
 
@@ -118,7 +144,7 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
           variant="contained"
           color="primary"
           onClick={handleConnect}
-          disabled={isConnecting}
+          disabled={isConnecting || supportedTypes.length === 0}
           startIcon={<PowerSettingsNew />}
           size="small"
         >
