@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JSLinterConfiguration">
+    <option name="eslintPackage" value="$PROJECT_DIR$/node_modules/eslint" />
+    <option name="nodeInterpreter" value="project" />
+    <option name="eslintRcFile" value="$PROJECT_DIR$/eslint.config.js" />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/routeTree.gen.ts" />
+      </list>
+    </option>
+  </component>
+</project>

@@ -16,7 +16,16 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-.idea
+
+# WebStorm/IntelliJ IDEA
+.idea/*
+!.idea/codeStyles.xml
+!.idea/codeStyleSettings.xml
+!.idea/prettier.xml
+!.idea/jsLinters.xml
+!.idea/inspectionProfiles/
+!.idea/inspectionProfiles/Project_Default.xml
+
 .DS_Store
 *.suo
 *.ntvs*
