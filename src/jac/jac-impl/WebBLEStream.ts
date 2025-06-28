@@ -1,5 +1,5 @@
-import type { Duplex } from '@/jac/jac-tools/link/stream.ts'
 import { Buffer } from 'buffer'
+import { BaseStream } from './BaseStream.ts'
 
 class WebBLEError extends Error {
   constructor(message: string) {
@@ -13,30 +13,24 @@ export const SERVICE_UUID = 0x00ff
 export const CHARACTERISTIC_UUID = 0xff01
 export const NAME_PREFIX = 'ESP32'
 
-export class WebBLEStream implements Duplex {
-  private callbacks: {
-    data?: (data: Buffer) => void
-    error?: (err: Error) => void
-    end?: () => void
-  } = {}
-
+export class WebBLEStream extends BaseStream {
   private device: BluetoothDevice
   private server: BluetoothRemoteGATTServer | null = null
   private service: BluetoothRemoteGATTService | null = null
   private characteristic: BluetoothRemoteGATTCharacteristic | null = null
-  private isInitialized: boolean = false
 
   constructor(device: BluetoothDevice) {
+    super()
     this.device = device
-    this.initializeConnection().catch(error => {
-      if (this.callbacks['error']) {
-        this.callbacks['error'](error)
-      }
+    // Initialize after setting up properties
+    this.initialize().catch(error => {
+      console.error('WebBLEStream initialization failed:', error)
     })
   }
 
-  private async initializeConnection(): Promise<void> {
+  protected async initializeConnection(): Promise<void> {
     try {
+      console.log('WebBLEStream initializeConnection called')
       // Add disconnect event listener
       this.device.addEventListener('gattserverdisconnected', this.onDisconnected.bind(this))
 
@@ -57,27 +51,42 @@ export class WebBLEStream implements Duplex {
       )
 
       this.isInitialized = true
+      console.log('WebBLEStream initialized successfully')
     } catch (error) {
-      if (this.callbacks['error']) {
-        this.callbacks['error'](error as Error)
-      }
+      console.error('WebBLEStream initialization error:', error)
       throw new WebBLEError(`Cannot initialize BLE connection: ${error}`)
     }
   }
 
-  private onDisconnected(): void {
-    this.isInitialized = false
-    if (this.callbacks['end']) {
-      this.callbacks['end']()
+  protected writeToTransport(data: Uint8Array): void {
+    if (!this.characteristic || !this.isInitialized) {
+      throw new WebBLEError('BLE characteristic not available or not initialized')
     }
-    this.cleanup()
+    this.characteristic.writeValue(data)
+  }
+
+  protected async cleanupTransport(): Promise<void> {
+    try {
+      if (this.device && this.device.gatt && this.device.gatt.connected) {
+        await this.device.gatt.disconnect()
+      }
+      this.cleanup()
+    } catch (error) {
+      console.error('Error during BLE cleanup:', error)
+    }
+  }
+
+  private onDisconnected(): void {
+    this.handleEnd()
   }
 
   private onDataReceived(event: Event): void {
+    console.log('WebBLEStream onDataReceived called')
     const target = event.target as BluetoothRemoteGATTCharacteristic
     const { value } = target
-    if (value && this.callbacks['data']) {
-      this.callbacks['data'](Buffer.from(value.buffer))
+    if (value) {
+      console.log('WebBLEStream received data:', value)
+      this.handleData(Buffer.from(value.buffer))
     }
   }
 
@@ -85,75 +94,5 @@ export class WebBLEStream implements Duplex {
     this.characteristic = null
     this.service = null
     this.server = null
-  }
-
-  public put(c: number): void {
-    this.write(Buffer.from([c]))
-  }
-
-  public write(buf: Buffer): void {
-    if (!this.characteristic || !this.isInitialized) {
-      throw new WebBLEError('BLE characteristic not available or not initialized')
-    }
-
-    try {
-      // Convert Buffer to Uint8Array
-      const uint8Array = new Uint8Array(buf)
-      this.characteristic.writeValue(uint8Array)
-    } catch (error) {
-      if (this.callbacks['error']) {
-        this.callbacks['error'](error as Error)
-      }
-    }
-  }
-
-  public onData(callback?: (data: Buffer) => void): void {
-    this.callbacks['data'] = callback
-  }
-
-  public onEnd(callback?: () => void): void {
-    this.callbacks['end'] = callback
-  }
-
-  public onError(callback?: (err: Error) => void): void {
-    this.callbacks['error'] = callback
-  }
-
-  public destroy(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.callbacks['end']) {
-        const end = this.callbacks['end']
-        this.callbacks['end'] = () => {
-          end()
-          resolve()
-        }
-      } else {
-        this.callbacks['end'] = () => {
-          resolve()
-        }
-      }
-      if (this.callbacks['error']) {
-        const error = this.callbacks['error']
-        this.callbacks['error'] = (err: Error) => {
-          error(err)
-          reject(err)
-        }
-      } else {
-        this.callbacks['error'] = (err: Error) => {
-          reject(err)
-        }
-      }
-
-      void (async () => {
-        try {
-          if (this.device && this.device.gatt && this.device.gatt.connected) {
-            await this.device.gatt.disconnect()
-          }
-          this.cleanup()
-        } catch (error) {
-          console.error('Error during BLE cleanup:', error)
-        }
-      })()
-    })
   }
 }

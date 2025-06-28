@@ -76,11 +76,13 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
     if (device) {
       addLine('System connected', 'output')
 
-      device.programOutput.onData?.(data => {
+      device.programOutput.onData(data => {
+        console.log('Terminal received programOutput data:', data.toString())
         addLine(data.toString(), 'output')
       })
 
-      device.programError.onData?.(data => {
+      device.programError.onData(data => {
+        console.log('Terminal received programError data:', data.toString())
         addLine(data.toString(), 'error')
       })
     } else {
