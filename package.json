@@ -23,6 +23,8 @@
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
     "@tanstack/react-router": "^1.122.0",
+    "buffer": "^6.0.3",
+    "crc": "^4.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

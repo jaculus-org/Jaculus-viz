@@ -13,6 +13,7 @@ import {
   Stack,
 } from '@mui/material'
 import { Computer, Memory, Schedule, WifiTethering, WifiOff } from '@mui/icons-material'
+import Terminal from '@/components/Terminal'
 
 export const Route = createFileRoute('/dashboard')({
   component: () => <Dashboard />,
@@ -167,6 +168,14 @@ function Dashboard() {
           Chart updates every second with simulated sensor data
         </Typography>
       </Paper>
+
+      {/* Terminal Section */}
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h2" sx={{ mb: 2 }}>
+          Terminal
+        </Typography>
+        <Terminal height={400} />
+      </Box>
     </Box>
   )
 }
