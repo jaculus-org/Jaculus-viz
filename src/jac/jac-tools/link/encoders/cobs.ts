@@ -1,6 +1,6 @@
 import crc16 from 'crc/crc16'
 import { Buffer } from 'buffer'
-import type { Encoder, Packetizer, Serializer } from '@/jac-tools/link/encoders/interface.ts'
+import type { Encoder, Packetizer, Serializer } from '@/jac/jac-tools/link/encoders/interface.ts'
 
 class PacketStructure {
   protected DELIMITER = 0x00

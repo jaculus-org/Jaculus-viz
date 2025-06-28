@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { DeviceContext } from './DeviceContext'
-import type { JacDevice } from '@/jac-tools/device/jacDevice.ts'
+import type { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 
 interface DeviceProps {
   children: ReactNode

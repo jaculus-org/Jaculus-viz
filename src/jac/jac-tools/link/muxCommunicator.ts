@@ -1,12 +1,12 @@
 import { Buffer } from 'buffer'
-import type { Mux } from '@/jac-tools/link/mux.ts'
+import type { Mux } from '@/jac/jac-tools/link/mux.ts'
 import type {
   InputPacketCommunicator,
   InputStreamCommunicator,
   OutputPacketCommunicator,
   OutputStreamCommunicator,
-} from '@/jac-tools/link/communicator.ts'
-import type { Consumer, Packet } from '@/jac-tools/link/linkTypes.ts'
+} from '@/jac/jac-tools/link/communicator.ts'
+import type { Consumer, Packet } from '@/jac/jac-tools/link/linkTypes.ts'
 
 export class MuxOutputStreamCommunicator implements OutputStreamCommunicator {
   private mux: Mux

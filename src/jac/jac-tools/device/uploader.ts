@@ -1,11 +1,11 @@
-import { encodePath } from '../util/encoding'
-import { logger } from '../util/logger'
+import { encodePath } from '../util/encoding.ts'
+import { logger } from '../util/logger.ts'
 import { Buffer } from 'buffer'
 import type {
   InputPacketCommunicator,
   OutputPacketCommunicator,
-} from '@/jac-tools/link/communicator.ts'
-import type { Packet } from '@/jac-tools/link/linkTypes.ts'
+} from '@/jac/jac-tools/link/communicator.ts'
+import type { Packet } from '@/jac/jac-tools/link/linkTypes.ts'
 
 export enum UploaderCommand {
   READ_FILE = 0x01,

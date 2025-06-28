@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import type { Packet } from '@/jac-tools/link/linkTypes.ts'
+import type { Packet } from '@/jac/jac-tools/link/linkTypes.ts'
 
 export interface OutputStreamCommunicator {
   put(c: number): void

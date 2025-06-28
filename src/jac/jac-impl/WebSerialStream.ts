@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import type { Duplex } from '@/jac-tools/link/stream.ts'
+import type { Duplex } from '@/jac/jac-tools/link/stream.ts'
 
 class WebSerialError extends Error {
   constructor(message: string) {

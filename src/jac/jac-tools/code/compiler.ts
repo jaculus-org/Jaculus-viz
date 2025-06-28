@@ -1,7 +1,7 @@
 import { stderr } from 'process'
 import { Writable } from 'stream'
 import ts from 'typescript'
-import { logger } from '../util/logger'
+import { logger } from '../util/logger.ts'
 
 function printMessage(
   message: string | ts.DiagnosticMessageChain,

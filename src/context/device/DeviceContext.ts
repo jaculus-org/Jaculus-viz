@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { JacDevice } from '@/jac-tools/device/jacDevice.ts'
+import type { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 
 export interface DeviceContextType {
   device: JacDevice | null

@@ -1,8 +1,8 @@
-import { logger } from '../util/logger'
+import { logger } from '../util/logger.ts'
 import { Buffer } from 'buffer'
-import type { Encoder, Packetizer, Serializer } from '@/jac-tools/link/encoders/interface.ts'
-import type { Consumer, Packet } from '@/jac-tools/link/linkTypes.ts'
-import type { Duplex, OutputStream } from '@/jac-tools/link/stream.ts'
+import type { Encoder, Packetizer, Serializer } from '@/jac/jac-tools/link/encoders/interface.ts'
+import type { Consumer, Packet } from '@/jac/jac-tools/link/linkTypes.ts'
+import type { Duplex, OutputStream } from '@/jac/jac-tools/link/stream.ts'
 
 class MuxPacket implements Packet {
   private _stream: OutputStream

@@ -1,11 +1,11 @@
-import { logger } from '../util/logger'
-import { TimeoutPromise } from '../util/timeoutPromise'
-import { encodePath } from '../util/encoding'
+import { logger } from '../util/logger.ts'
+import { TimeoutPromise } from '../util/timeoutPromise.ts'
+import { encodePath } from '../util/encoding.ts'
 import { Buffer } from 'buffer'
 import type {
   InputPacketCommunicator,
   OutputPacketCommunicator,
-} from '@/jac-tools/link/communicator.ts'
+} from '@/jac/jac-tools/link/communicator.ts'
 
 const TIMEOUT_MS = 5000
 const LOCK_TIMEOUT = 100

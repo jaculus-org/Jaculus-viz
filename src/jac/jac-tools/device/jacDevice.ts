@@ -1,14 +1,14 @@
-import { Mux } from '../link/mux'
+import { Mux } from '../link/mux.ts'
 import {
   MuxOutputPacketCommunicator,
   MuxInputPacketCommunicator,
   MuxOutputStreamCommunicator,
   MuxInputStreamCommunicator,
-} from '../link/muxCommunicator'
-import { Uploader } from './uploader'
-import { Controller } from './controller'
-import { CobsEncoder } from '../link/encoders/cobs'
-import type { Duplex } from '@/jac-tools/link/stream.ts'
+} from '../link/muxCommunicator.ts'
+import { Uploader } from './uploader.ts'
+import { Controller } from './controller.ts'
+import { CobsEncoder } from '../link/encoders/cobs.ts'
+import type { Duplex } from '@/jac/jac-tools/link/stream.ts'
 
 export class JacDevice {
   private _mux: Mux
