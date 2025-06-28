@@ -47,7 +47,7 @@ export const Route = createRootRoute({
       <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
         <Outlet />
       </Container>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools />  */} {/* Enable this line to use the devtools */}
     </>
   ),
 })
