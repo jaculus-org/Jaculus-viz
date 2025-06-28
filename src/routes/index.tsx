@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material'
 
 export const Route = createFileRoute('/')({
   component: () => <Index />,
@@ -6,19 +7,38 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   return (
-    <div className="p-2">
-      <h1 className="text-3xl font-bold mb-4">Welcome to Jac Viz!</h1>
-      <p className="text-gray-600 mb-4">
+    <Box>
+      <Typography variant="h1" gutterBottom>
+        Welcome to Jac Viz!
+      </Typography>
+      <Typography variant="body1" color="text.secondary" paragraph>
         This is the home page of your Jaculus visualization application.
-      </p>
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Getting Started</h2>
-        <ul className="list-disc list-inside space-y-1">
-          <li>Check out the Dashboard for data visualization</li>
-          <li>Learn more about the project on the About page</li>
-          <li>Use the navigation links above to explore</li>
-        </ul>
-      </div>
-    </div>
+      </Typography>
+      <Paper elevation={1} sx={{ p: 3, backgroundColor: 'primary.light' }}>
+        <Typography variant="h2" gutterBottom color="primary.contrastText">
+          Getting Started
+        </Typography>
+        <List>
+          <ListItem>
+            <ListItemText
+              primary="Check out the Dashboard for data visualization"
+              sx={{ color: 'primary.contrastText' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="Learn more about the project on the About page"
+              sx={{ color: 'primary.contrastText' }}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="Use the navigation links above to explore"
+              sx={{ color: 'primary.contrastText' }}
+            />
+          </ListItem>
+        </List>
+      </Paper>
+    </Box>
   )
 }

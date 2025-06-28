@@ -1,5 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import {
+  Typography,
+  Box,
+  Button,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+  Chip,
+  LinearProgress,
+  Stack
+} from '@mui/material'
+import {
+  Computer,
+  Memory,
+  Schedule,
+  WifiTethering,
+  WifiOff
+} from '@mui/icons-material'
 
 export const Route = createFileRoute('/dashboard')({
   component: () => <Dashboard />,
@@ -25,73 +44,142 @@ function Dashboard() {
     setIsConnected(!isConnected)
   }
 
+  const currentValue = data.length > 0 ? data[data.length - 1] : 0
+  const memoryValue = data.length > 0 ? Math.floor(data[data.length - 1] * 0.8) : 0
+
   return (
-    <div className="p-2">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <button
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h1">
+          Dashboard
+        </Typography>
+        <Button
+          variant={isConnected ? "contained" : "outlined"}
+          color={isConnected ? "success" : "error"}
+          startIcon={isConnected ? <WifiTethering /> : <WifiOff />}
           onClick={toggleConnection}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            isConnected
-              ? 'bg-green-100 text-green-800 border border-green-300'
-              : 'bg-red-100 text-red-800 border border-red-300'
-          }`}
         >
-          Status: {isConnected ? 'Connected' : 'Disconnected'}
-        </button>
-      </div>
+          {isConnected ? 'Connected' : 'Disconnected'}
+        </Button>
+      </Box>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-blue-50 p-6 rounded-lg border">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">CPU Usage</h3>
-          <div className="text-3xl font-bold text-blue-600">
-            {data.length > 0 ? `${data[data.length - 1]}%` : '0%'}
-          </div>
-          <p className="text-sm text-blue-600 mt-1">Real-time monitoring</p>
-        </div>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card elevation={2} sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Computer color="primary" sx={{ mr: 1 }} />
+                <Typography variant="h3" color="primary">
+                  CPU Usage
+                </Typography>
+              </Box>
+              <Typography variant="h2" color="primary" gutterBottom>
+                {currentValue}%
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={currentValue}
+                color="primary"
+                sx={{ mb: 1 }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                Real-time monitoring
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <div className="bg-green-50 p-6 rounded-lg border">
-          <h3 className="text-lg font-semibold text-green-800 mb-2">Memory</h3>
-          <div className="text-3xl font-bold text-green-600">
-            {data.length > 0 ? `${Math.floor(data[data.length - 1] * 0.8)}MB` : '0MB'}
-          </div>
-          <p className="text-sm text-green-600 mt-1">Available: 512MB</p>
-        </div>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card elevation={2} sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Memory color="success" sx={{ mr: 1 }} />
+                <Typography variant="h3" color="success.main">
+                  Memory
+                </Typography>
+              </Box>
+              <Typography variant="h2" color="success.main" gutterBottom>
+                {memoryValue}MB
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={(memoryValue / 512) * 100}
+                color="success"
+                sx={{ mb: 1 }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                Available: 512MB
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <div className="bg-purple-50 p-6 rounded-lg border">
-          <h3 className="text-lg font-semibold text-purple-800 mb-2">Uptime</h3>
-          <div className="text-3xl font-bold text-purple-600">12:34:56</div>
-          <p className="text-sm text-purple-600 mt-1">Running stable</p>
-        </div>
-      </div>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card elevation={2} sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Schedule color="secondary" sx={{ mr: 1 }} />
+                <Typography variant="h3" color="secondary">
+                  Uptime
+                </Typography>
+              </Box>
+              <Typography variant="h2" color="secondary" gutterBottom>
+                12:34:56
+              </Typography>
+              <Chip
+                label="Running stable"
+                color="success"
+                variant="outlined"
+                size="small"
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-      <div className="bg-white p-6 rounded-lg border shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">Real-time Data Visualization</h2>
-        <div className="h-64 bg-gray-50 rounded-lg flex items-end justify-center p-4">
-          <div className="flex items-end space-x-2 h-full">
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Typography variant="h2" gutterBottom>
+          Real-time Data Visualization
+        </Typography>
+        <Box
+          sx={{
+            height: 250,
+            backgroundColor: 'background.paper',
+            borderRadius: 1,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            p: 2,
+            border: 1,
+            borderColor: 'divider'
+          }}
+        >
+          <Stack direction="row" spacing={0.5} sx={{ height: '100%', alignItems: 'flex-end' }}>
             {data.map((value, index) => (
-              <div
+              <Box
                 key={index}
-                className="bg-blue-500 rounded-t"
-                style={{
+                sx={{
+                  backgroundColor: 'primary.main',
+                  borderRadius: '4px 4px 0 0',
                   height: `${(value / 100) * 100}%`,
-                  width: '20px',
-                  minHeight: '4px'
+                  width: 20,
+                  minHeight: 4,
+                  transition: 'height 0.3s ease-out'
                 }}
                 title={`Value: ${value}`}
               />
             ))}
-          </div>
+          </Stack>
           {data.length === 0 && (
-            <div className="text-gray-500 text-center">
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
               Waiting for data...
-            </div>
+            </Typography>
           )}
-        </div>
-        <p className="text-sm text-gray-600 mt-2">
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
           Chart updates every second with simulated sensor data
-        </p>
-      </div>
-    </div>
+        </Typography>
+      </Paper>
+    </Box>
   )
 }
