@@ -1,5 +1,5 @@
-import type { JacDevice } from 'jaculus-tools/dist/src/device/jacDevice.js'
 import { createContext } from 'react'
+import type { JacDevice } from '@/jac-tools/device/jacDevice.ts'
 
 export interface DeviceContextType {
   device: JacDevice | null

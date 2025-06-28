@@ -1,0 +1,21 @@
+import { Buffer } from 'buffer'
+
+export interface OutputStream {
+  put(c: number): void
+  write(buf: Buffer): void
+
+  onEnd(callback: (() => void) | undefined): void
+  onError(callback: ((err: Error) => void) | undefined): void
+
+  destroy(): Promise<void>
+}
+
+export interface InputStream {
+  onData(callback: ((data: Buffer) => void) | undefined): void
+  onEnd(callback: (() => void) | undefined): void
+  onError(callback: ((err: Error) => void) | undefined): void
+
+  destroy(): Promise<void>
+}
+
+export interface Duplex extends OutputStream, InputStream {}

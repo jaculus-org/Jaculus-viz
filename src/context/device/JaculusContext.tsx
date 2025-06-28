@@ -1,7 +1,7 @@
-import { JacDevice } from 'jaculus-tools/dist/src/device/jacDevice.js'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { DeviceContext } from './DeviceContext'
+import type { JacDevice } from '@/jac-tools/device/jacDevice.ts'
 
 interface DeviceProps {
   children: ReactNode
