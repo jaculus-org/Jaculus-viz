@@ -1,46 +1,50 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { AppBar, Toolbar, Box, Button, Container, Divider } from '@mui/material'
+import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material'
 import { Home, Info, Dashboard } from '@mui/icons-material'
+import { ThemeToggle } from '../components/ThemeToggle'
 
 export const Route = createRootRoute({
   component: () => (
     <>
-      <AppBar position="static" elevation={1} sx={{ backgroundColor: 'background.paper', color: 'text.primary' }}>
+      <AppBar position="static" elevation={1}>
         <Toolbar>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Typography variant="h6" component="div" sx={{ mr: 4 }}>
+            Jaculus Viz
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>
             <Button
+              color="inherit"
               component={Link}
               to="/"
               startIcon={<Home />}
-              sx={{ color: 'text.primary' }}
-              className="[&.active]:font-bold [&.active]:color-primary"
+              sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
             >
               Home
             </Button>
             <Button
+              color="inherit"
               component={Link}
               to="/about"
               startIcon={<Info />}
-              sx={{ color: 'text.primary' }}
-              className="[&.active]:font-bold [&.active]:color-primary"
+              sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
             >
               About
             </Button>
             <Button
+              color="inherit"
               component={Link}
               to="/dashboard"
               startIcon={<Dashboard />}
-              sx={{ color: 'text.primary' }}
-              className="[&.active]:font-bold [&.active]:color-primary"
+              sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
             >
               Dashboard
             </Button>
           </Box>
+          <ThemeToggle />
         </Toolbar>
       </AppBar>
-      <Divider />
-      <Container maxWidth="lg" sx={{ py: 2 }}>
+      <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
         <Outlet />
       </Container>
       <TanStackRouterDevtools />
