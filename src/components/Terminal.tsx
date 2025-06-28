@@ -1,9 +1,26 @@
-import type { FC } from 'react'
-import { useState, useEffect, useRef } from 'react'
-import { Box, Paper, TextField, Typography, IconButton, Divider, Alert } from '@mui/material'
-import { Send, Clear, Terminal as TerminalIcon } from '@mui/icons-material'
-import { useSnackbar } from 'notistack'
 import { useDevice } from '@/context/device/useDevice'
+import {
+  Clear,
+  Send,
+  Terminal as TerminalIcon,
+  VerticalAlignBottom,
+  VerticalAlignBottomOutlined,
+} from '@mui/icons-material'
+import {
+  Alert,
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import { Buffer } from 'buffer'
+import { useSnackbar } from 'notistack'
+import type { FC } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface TerminalLine {
   id: string
@@ -17,19 +34,41 @@ export interface TerminalProps {
   height?: number | string
 }
 
-const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
+const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
+  const theme = useTheme()
   const { device } = useDevice()
   const { enqueueSnackbar } = useSnackbar()
   const [lines, setLines] = useState<TerminalLine[]>([])
   const [input, setInput] = useState('')
   const [isConnected, setIsConnected] = useState(false)
+  const [autoScroll, setAutoScroll] = useState(true)
   const terminalEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom when autoScroll is enabled
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [lines])
+    if (autoScroll) {
+      terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [lines, autoScroll])
+
+  const addLine = useCallback(
+    (text: string, type: TerminalLine['type']) => {
+      const newLine: TerminalLine = {
+        id: Date.now().toString() + Math.random().toString(36),
+        text,
+        type,
+        timestamp: new Date(),
+      }
+
+      setLines(prev => {
+        const updated = [...prev, newLine]
+        // Keep only the last maxLines
+        return updated.slice(-maxLines)
+      })
+    },
+    [maxLines]
+  )
 
   // Handle device connection status
   useEffect(() => {
@@ -37,34 +76,17 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
     if (device) {
       addLine('System connected', 'output')
 
-      // Set up device data listener (if available)
-      // Note: This depends on the actual JacDevice API
-      // device.onData?.((data: Buffer) => {
-      //   addLine(data.toString(), 'output')
-      // })
+      device.programOutput.onData?.(data => {
+        addLine(data.toString(), 'output')
+      })
 
-      // device.onError?.((error: Error) => {
-      //   addLine(`Error: ${error.message}`, 'error')
-      // })
+      device.programError.onData?.(data => {
+        addLine(data.toString(), 'error')
+      })
     } else {
       addLine('System disconnected', 'error')
     }
-  }, [device])
-
-  const addLine = (text: string, type: TerminalLine['type']) => {
-    const newLine: TerminalLine = {
-      id: Date.now().toString() + Math.random().toString(36),
-      text,
-      type,
-      timestamp: new Date(),
-    }
-
-    setLines(prev => {
-      const updated = [...prev, newLine]
-      // Keep only the last maxLines
-      return updated.slice(-maxLines)
-    })
-  }
+  }, [device, addLine])
 
   const handleSendCommand = () => {
     if (!input.trim() || !device) return
@@ -73,13 +95,7 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
     addLine(`> ${input}`, 'input')
 
     try {
-      // TODO: Send command to device
-      // This depends on the actual JacDevice API
-      // For now, we'll just echo back
-      addLine(`Echo: ${input}`, 'output')
-
-      // Example of how you might send data:
-      // device.write(Buffer.from(input + '\n'))
+      device.programInput.write(Buffer.from(input + '\n'))
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error sending command'
       addLine(`Error sending command: ${errorMessage}`, 'error')
@@ -101,15 +117,25 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
     setLines([])
   }
 
+  const toggleAutoScroll = () => {
+    setAutoScroll(!autoScroll)
+    // If enabling auto-scroll, immediately scroll to bottom
+    if (!autoScroll) {
+      setTimeout(() => {
+        terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    }
+  }
+
   const getLineColor = (type: TerminalLine['type']) => {
     switch (type) {
       case 'input':
-        return '#4caf50' // green
+        return theme.palette.success.main
       case 'error':
-        return '#f44336' // red
+        return theme.palette.error.main
       case 'output':
       default:
-        return '#ffffff' // white
+        return theme.palette.mode === 'dark' ? '#ffffff' : '#000000'
     }
   }
 
@@ -124,8 +150,28 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
 
   if (!isConnected) {
     return (
-      <Paper sx={{ p: 2, height }}>
-        <Alert severity="info" icon={<TerminalIcon />}>
+      <Paper
+        sx={{
+          p: 4,
+          height,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 2,
+          boxShadow: theme.shadows[3],
+        }}
+      >
+        <Alert
+          severity="info"
+          icon={<TerminalIcon />}
+          sx={{
+            fontSize: '1.1rem',
+            '& .MuiAlert-message': {
+              display: 'flex',
+              alignItems: 'center',
+            },
+          }}
+        >
           Connect to a device to use the terminal
         </Alert>
       </Paper>
@@ -133,28 +179,70 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
   }
 
   return (
-    <Paper sx={{ height, display: 'flex', flexDirection: 'column' }}>
+    <Paper
+      sx={{
+        height,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 2,
+        overflow: 'hidden',
+        boxShadow: theme.shadows[4],
+      }}
+    >
       {/* Header */}
       <Box
         sx={{
-          p: 1,
+          p: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           borderBottom: 1,
           borderColor: 'divider',
-          bgcolor: 'grey.900',
+          bgcolor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <TerminalIcon sx={{ color: 'grey.400' }} />
-          <Typography variant="subtitle2" sx={{ color: 'grey.400' }}>
+          <TerminalIcon sx={{ color: theme.palette.primary.main, fontSize: '1.5rem' }} />
+          <Typography
+            variant="h6"
+            sx={{
+              color: theme.palette.text.primary,
+              fontWeight: 600,
+            }}
+          >
             Terminal
           </Typography>
         </Box>
-        <IconButton size="small" onClick={clearTerminal} sx={{ color: 'grey.400' }}>
-          <Clear />
-        </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}>
+            <IconButton
+              size="medium"
+              onClick={toggleAutoScroll}
+              sx={{
+                color: autoScroll ? theme.palette.primary.main : theme.palette.text.secondary,
+                '&:hover': {
+                  bgcolor: theme.palette.action.hover,
+                },
+              }}
+            >
+              {autoScroll ? <VerticalAlignBottom /> : <VerticalAlignBottomOutlined />}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Clear terminal">
+            <IconButton
+              size="medium"
+              onClick={clearTerminal}
+              sx={{
+                color: theme.palette.text.secondary,
+                '&:hover': {
+                  bgcolor: theme.palette.action.hover,
+                },
+              }}
+            >
+              <Clear />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
 
       {/* Terminal Output */}
@@ -162,10 +250,24 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
         sx={{
           flex: 1,
           overflow: 'auto',
-          p: 1,
-          bgcolor: '#1a1a1a',
-          fontFamily: 'monospace',
-          fontSize: '14px',
+          p: 2,
+          bgcolor: theme.palette.mode === 'dark' ? '#0d1117' : '#f8f9fa',
+          fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
+          fontSize: '15px',
+          lineHeight: 1.5,
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: theme.palette.mode === 'dark' ? '#21262d' : '#e1e4e8',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: theme.palette.mode === 'dark' ? '#484f58' : '#c1c8cd',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: theme.palette.mode === 'dark' ? '#5a6269' : '#a8b3ba',
+          },
         }}
       >
         {lines.map(line => (
@@ -173,27 +275,37 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
             key={line.id}
             sx={{
               display: 'flex',
-              mb: 0.5,
+              mb: 1,
               color: getLineColor(line.type),
+              '&:hover': {
+                bgcolor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.02)'
+                    : 'rgba(0, 0, 0, 0.02)',
+              },
             }}
           >
             <Typography
               variant="caption"
               sx={{
-                color: 'grey.500',
-                mr: 1,
-                minWidth: '60px',
-                fontFamily: 'monospace',
+                color: theme.palette.text.disabled,
+                mr: 2,
+                minWidth: '70px',
+                fontFamily: 'inherit',
+                fontSize: '13px',
+                alignSelf: 'flex-start',
+                mt: 0.2,
               }}
             >
               {formatTimestamp(line.timestamp)}
             </Typography>
             <Typography
               sx={{
-                fontFamily: 'monospace',
-                fontSize: '14px',
+                fontFamily: 'inherit',
+                fontSize: '15px',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
+                flex: 1,
               }}
             >
               {line.text}
@@ -206,20 +318,43 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
       <Divider />
 
       {/* Input */}
-      <Box sx={{ p: 1, display: 'flex', gap: 1, bgcolor: 'grey.100' }}>
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          gap: 2,
+          bgcolor: theme.palette.background.paper,
+          borderTop: `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <TextField
           ref={inputRef}
           fullWidth
-          size="small"
+          size="medium"
           variant="outlined"
-          placeholder="Enter command..."
+          placeholder="Enter command and press Enter..."
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           disabled={!isConnected}
           sx={{
             '& .MuiOutlinedInput-root': {
-              fontFamily: 'monospace',
+              fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
+              fontSize: '15px',
+              bgcolor:
+                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              '&:hover': {
+                bgcolor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.08)'
+                    : 'rgba(0, 0, 0, 0.04)',
+              },
+              '&.Mui-focused': {
+                bgcolor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.06)',
+              },
             },
           }}
         />
@@ -227,6 +362,18 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
           color="primary"
           onClick={handleSendCommand}
           disabled={!input.trim() || !isConnected}
+          size="large"
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+            '&:disabled': {
+              bgcolor: theme.palette.action.disabledBackground,
+              color: theme.palette.action.disabled,
+            },
+          }}
         >
           <Send />
         </IconButton>

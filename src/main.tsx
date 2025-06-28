@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@/context'
+import NotificationProvider from '@/providers/NotificationProvider.tsx'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import NotificationProvider from '@/providers/NotificationProvider.tsx'
 
 // Import the generated route tree
 import { DeviceProvider } from '@/context/device'

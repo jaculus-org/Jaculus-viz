@@ -1,9 +1,9 @@
-import type { FC } from 'react'
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
-import { Home, Info, Dashboard } from '@mui/icons-material'
-import { Link } from '@tanstack/react-router'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import ConnectionControl from '@/components/ConnectionControl'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { Home, Info, Terminal } from '@mui/icons-material'
+import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material'
+import { Link } from '@tanstack/react-router'
+import type { FC } from 'react'
 
 export interface HeaderProps {
   onConnectionChange?: (connected: boolean) => void
@@ -39,11 +39,11 @@ const Header: FC<HeaderProps> = ({ onConnectionChange }) => {
           <Button
             color="inherit"
             component={Link}
-            to="/dashboard"
-            startIcon={<Dashboard />}
+            to="/terminal"
+            startIcon={<Terminal />}
             sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
           >
-            Dashboard
+            Terminal
           </Button>
         </Box>
 
