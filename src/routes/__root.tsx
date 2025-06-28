@@ -1,8 +1,7 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material'
 import { Home, Info, Dashboard } from '@mui/icons-material'
-import { ThemeToggle } from '../components/ThemeToggle'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export const Route = createRootRoute({
   component: () => (

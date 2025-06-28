@@ -8,7 +8,7 @@ import {
   Computer
 } from '@mui/icons-material'
 import { useState } from 'react'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '@/context/ThemeContext'
 
 export function ThemeToggle() {
   const { mode, setMode, actualMode } = useTheme()
