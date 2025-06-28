@@ -1,21 +1,11 @@
+import { useDevice } from '@/context/device/useDevice'
+import { WebSerialStream } from '@/jac/jac-impl/WebSerialStream.ts'
+import { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
+import { Bluetooth, Power, PowerSettingsNew, Usb } from '@mui/icons-material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { useSnackbar } from 'notistack'
 import type { FC } from 'react'
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Chip,
-  Typography,
-  Alert,
-  Snackbar,
-} from '@mui/material'
-import { Bluetooth, Usb, PowerSettingsNew, Power } from '@mui/icons-material'
-import { useDevice } from '@/context/device/useDevice'
-import { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
-import { WebSerialStream } from '@/jac/jac-impl/WebSerialStream.ts'
 
 type ConnectionType = 'serial' | 'ble'
 
@@ -25,14 +15,13 @@ export interface ConnectionControlProps {
 
 const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) => {
   const { setNewDevice, disconnectDevice, device } = useDevice()
+  const { enqueueSnackbar } = useSnackbar()
   const [connectionType, setConnectionType] = useState<ConnectionType>('serial')
   const [isConnecting, setIsConnecting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const connectSerial = async () => {
     try {
       setIsConnecting(true)
-      setError(null)
 
       if (!navigator.serial) {
         throw new Error('Web Serial API is not supported in this browser')
@@ -46,9 +35,10 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
 
       setNewDevice(jacDevice)
       onConnectionChange?.(true)
+      enqueueSnackbar('Successfully connected via Serial', { variant: 'success' })
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : 'Failed to connect via Serial'
-      setError(errorMessage)
+      enqueueSnackbar(errorMessage, { variant: 'error' })
       console.error('Serial connection error:', e)
     } finally {
       setIsConnecting(false)
@@ -58,13 +48,12 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
   const connectBLE = async () => {
     try {
       setIsConnecting(true)
-      setError(null)
 
       // TODO: Implement BLE connection
       throw new Error('Bluetooth connection is not yet implemented')
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : 'Failed to connect via Bluetooth'
-      setError(errorMessage)
+      enqueueSnackbar(errorMessage, { variant: 'error' })
       console.error('BLE connection error:', e)
     } finally {
       setIsConnecting(false)
@@ -83,43 +72,11 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
     try {
       disconnectDevice()
       onConnectionChange?.(false)
+      enqueueSnackbar('Disconnected successfully', { variant: 'info' })
     } catch (e) {
       console.error('Disconnect error:', e)
+      enqueueSnackbar('Error during disconnect', { variant: 'error' })
     }
-  }
-
-  const handleCloseError = () => {
-    setError(null)
-  }
-
-  const getConnectionIcon = () => {
-    if (connectionType === 'serial') {
-      return <Usb />
-    }
-    return <Bluetooth />
-  }
-
-  const getConnectionStatus = () => {
-    if (device) {
-      return (
-        <Chip
-          icon={getConnectionIcon()}
-          label="Connected"
-          color="success"
-          variant="filled"
-          size="small"
-        />
-      )
-    }
-    return (
-      <Chip
-        icon={getConnectionIcon()}
-        label="Disconnected"
-        color="default"
-        variant="outlined"
-        size="small"
-      />
-    )
   }
 
   return (
@@ -146,8 +103,6 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
         </Select>
       </FormControl>
 
-      {getConnectionStatus()}
-
       {device ? (
         <Button
           variant="contained"
@@ -170,17 +125,6 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
           {isConnecting ? 'Connecting...' : 'Connect'}
         </Button>
       )}
-
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={handleCloseError}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }

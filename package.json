@@ -12,7 +12,7 @@
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "start-compiled": "http-server dist -p 3000 -c-1",
+    "start-compiled": "http-server dist -p 5173 -c-1",
     "routes:generate": "tsr generate",
     "prepare": "husky",
     "pre-commit": "lint-staged"
@@ -25,6 +25,7 @@
     "@tanstack/react-router": "^1.122.0",
     "buffer": "^6.0.3",
     "crc": "^4.3.2",
+    "notistack": "^3.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

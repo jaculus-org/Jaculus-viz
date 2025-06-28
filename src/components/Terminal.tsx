@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import { useState, useEffect, useRef } from 'react'
 import { Box, Paper, TextField, Typography, IconButton, Divider, Alert } from '@mui/material'
 import { Send, Clear, Terminal as TerminalIcon } from '@mui/icons-material'
+import { useSnackbar } from 'notistack'
 import { useDevice } from '@/context/device/useDevice'
 
 interface TerminalLine {
@@ -18,6 +19,7 @@ export interface TerminalProps {
 
 const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
   const { device } = useDevice()
+  const { enqueueSnackbar } = useSnackbar()
   const [lines, setLines] = useState<TerminalLine[]>([])
   const [input, setInput] = useState('')
   const [isConnected, setIsConnected] = useState(false)
@@ -79,7 +81,9 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 1000, height = 400 }) => {
       // Example of how you might send data:
       // device.write(Buffer.from(input + '\n'))
     } catch (error) {
-      addLine(`Error sending command: ${error}`, 'error')
+      const errorMessage = error instanceof Error ? error.message : 'Error sending command'
+      addLine(`Error sending command: ${errorMessage}`, 'error')
+      enqueueSnackbar(errorMessage, { variant: 'error' })
     }
 
     setInput('')

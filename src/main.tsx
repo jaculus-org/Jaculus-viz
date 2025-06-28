@@ -2,6 +2,7 @@ import { ThemeProvider } from '@/context'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import NotificationProvider from '@/providers/NotificationProvider.tsx'
 
 // Import the generated route tree
 import { DeviceProvider } from '@/context/device'
@@ -19,10 +20,12 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      <DeviceProvider>
-        <RouterProvider router={router} />
-      </DeviceProvider>
-    </ThemeProvider>
+    <NotificationProvider>
+      <ThemeProvider>
+        <DeviceProvider>
+          <RouterProvider router={router} />
+        </DeviceProvider>
+      </ThemeProvider>
+    </NotificationProvider>
   </StrictMode>
 )
