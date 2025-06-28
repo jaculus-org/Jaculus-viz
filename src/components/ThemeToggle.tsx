@@ -1,14 +1,14 @@
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
+import { useTheme } from '@/context'
 import {
   Brightness4,
   Brightness7,
-  SettingsBrightness,
-  LightMode,
-  DarkMode,
   Computer,
+  DarkMode,
+  LightMode,
+  SettingsBrightness,
 } from '@mui/icons-material'
+import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import { useState } from 'react'
-import { useTheme } from '@/context/ThemeContext'
 
 export function ThemeToggle() {
   const { mode, setMode, actualMode } = useTheme()

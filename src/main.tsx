@@ -1,7 +1,7 @@
+import { ThemeProvider } from '@/context'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { ThemeProvider } from '@/context/ThemeContext'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'

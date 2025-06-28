@@ -1,25 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
-import { CssBaseline } from '@mui/material'
 import { getTheme } from '@/theme'
-
-type ThemeMode = 'light' | 'dark' | 'system'
-
-interface ThemeContextType {
-  mode: ThemeMode
-  setMode: (mode: ThemeMode) => void
-  actualMode: 'light' | 'dark'
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext)
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
-}
+import { CssBaseline } from '@mui/material'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import React, { useEffect, useState } from 'react'
+import { ThemeContext } from './context'
+import type { ThemeMode } from './types'
 
 interface ThemeProviderProps {
   children: React.ReactNode
