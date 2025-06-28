@@ -5,7 +5,7 @@ import {
   SettingsBrightness,
   LightMode,
   DarkMode,
-  Computer
+  Computer,
 } from '@mui/icons-material'
 import { useState } from 'react'
 import { useTheme } from '@/context/ThemeContext'
@@ -83,15 +83,13 @@ export function ThemeToggle() {
           horizontal: 'right',
         }}
       >
-        {(['light', 'dark', 'system'] as const).map((modeOption) => (
+        {(['light', 'dark', 'system'] as const).map(modeOption => (
           <MenuItem
             key={modeOption}
             onClick={() => handleModeSelect(modeOption)}
             selected={mode === modeOption}
           >
-            <ListItemIcon>
-              {getModeIcon(modeOption)}
-            </ListItemIcon>
+            <ListItemIcon>{getModeIcon(modeOption)}</ListItemIcon>
             <ListItemText primary={getModeLabel(modeOption)} />
           </MenuItem>
         ))}

@@ -7,7 +7,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Stack
+  Stack,
 } from '@mui/material'
 import {
   TrendingUp,
@@ -17,7 +17,7 @@ import {
   Code,
   Speed,
   Router,
-  Brush
+  Brush,
 } from '@mui/icons-material'
 
 export const Route = createFileRoute('/about')({
@@ -33,8 +33,8 @@ function About() {
 
       <Box sx={{ maxWidth: 600 }}>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Jac Viz is a visualization application for the Jaculus platform, providing
-          real-time monitoring and analysis capabilities for embedded systems.
+          Jac Viz is a visualization application for the Jaculus platform, providing real-time
+          monitoring and analysis capabilities for embedded systems.
         </Typography>
 
         <Stack spacing={3}>
@@ -70,7 +70,10 @@ function About() {
             </List>
           </Paper>
 
-          <Paper elevation={1} sx={{ p: 3, backgroundColor: 'success.light', color: 'success.contrastText' }}>
+          <Paper
+            elevation={1}
+            sx={{ p: 3, backgroundColor: 'success.light', color: 'success.contrastText' }}
+          >
             <Typography variant="h2" gutterBottom>
               Technology Stack
             </Typography>

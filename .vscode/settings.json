@@ -1,0 +1,30 @@
+{
+	"files.associations": {
+		"*.cps": "javascript",
+		"print": "cpp"
+	},
+	"files.readonlyInclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"files.watcherExclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"search.exclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit",
+		"source.organizeImports": "explicit"
+	},
+	"typescript.preferences.organizeImportsIgnoreCase": "auto",
+	"typescript.preferences.importModuleSpecifier": "relative",
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"prettier.requireConfig": true,
+	"editor.rulers": [100],
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true
+}

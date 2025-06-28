@@ -20,6 +20,9 @@ npm run build
 
 # Preview production build
 npm run preview
+
+# Generate routes - Tensack Router requires route generation
+npm run routes:generate
 ```
 
 ### Manual Deployment

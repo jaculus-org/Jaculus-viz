@@ -10,15 +10,9 @@ import {
   CardContent,
   Chip,
   LinearProgress,
-  Stack
+  Stack,
 } from '@mui/material'
-import {
-  Computer,
-  Memory,
-  Schedule,
-  WifiTethering,
-  WifiOff
-} from '@mui/icons-material'
+import { Computer, Memory, Schedule, WifiTethering, WifiOff } from '@mui/icons-material'
 
 export const Route = createFileRoute('/dashboard')({
   component: () => <Dashboard />,
@@ -33,7 +27,7 @@ function Dashboard() {
     const interval = setInterval(() => {
       setData(prev => [
         ...prev.slice(-9), // Keep last 9 values
-        Math.floor(Math.random() * 100)
+        Math.floor(Math.random() * 100),
       ])
     }, 1000)
 
@@ -50,12 +44,10 @@ function Dashboard() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h1">
-          Dashboard
-        </Typography>
+        <Typography variant="h1">Dashboard</Typography>
         <Button
-          variant={isConnected ? "contained" : "outlined"}
-          color={isConnected ? "success" : "error"}
+          variant={isConnected ? 'contained' : 'outlined'}
+          color={isConnected ? 'success' : 'error'}
           startIcon={isConnected ? <WifiTethering /> : <WifiOff />}
           onClick={toggleConnection}
         >
@@ -126,12 +118,7 @@ function Dashboard() {
               <Typography variant="h2" color="secondary" gutterBottom>
                 12:34:56
               </Typography>
-              <Chip
-                label="Running stable"
-                color="success"
-                variant="outlined"
-                size="small"
-              />
+              <Chip label="Running stable" color="success" variant="outlined" size="small" />
             </CardContent>
           </Card>
         </Grid>
@@ -151,7 +138,7 @@ function Dashboard() {
             justifyContent: 'center',
             p: 2,
             border: 1,
-            borderColor: 'divider'
+            borderColor: 'divider',
           }}
         >
           <Stack direction="row" spacing={0.5} sx={{ height: '100%', alignItems: 'flex-end' }}>
@@ -164,7 +151,7 @@ function Dashboard() {
                   height: `${(value / 100) * 100}%`,
                   width: 20,
                   minHeight: 4,
-                  transition: 'height 0.3s ease-out'
+                  transition: 'height 0.3s ease-out',
                 }}
                 title={`Value: ${value}`}
               />
