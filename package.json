@@ -1,21 +1,26 @@
 {
   "name": "jac-viz",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start-compiled": "http-server dist -p 3000 -c-1"
+    "start-compiled": "http-server dist -p 3000 -c-1",
+    "routes:generate": "tsr generate"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.122.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@tanstack/router-cli": "^1.122.0",
+    "@tanstack/router-devtools": "^1.122.0",
+    "@tanstack/router-plugin": "^1.122.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
