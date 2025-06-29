@@ -1,3 +1,4 @@
+import { useDevice } from '@/context/device'
 import { useDeviceData } from '@/context/deviceData/useDeviceData'
 import { Timeline } from '@mui/icons-material'
 import {
@@ -24,7 +25,6 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Line } from 'react-chartjs-2'
-import { useDevice } from '@/context/device'
 
 // Register Chart.js components
 ChartJS.register(
@@ -46,7 +46,8 @@ interface DataPoint {
 const Chart: FC = () => {
   const { device } = useDevice()
   const deviceData = useDeviceData(device)
-  const [selectedKey, setSelectedKey] = useState<string | number>(0)
+  const dataKeys = deviceData.getDataKeys()
+  const [selectedKey, setSelectedKey] = useState<string | number>(dataKeys[0] ?? '')
   const [isConnected, setIsConnected] = useState(false)
   const chartRef = useRef<ChartJS<'line', DataPoint[], number>>(null)
 
@@ -62,13 +63,14 @@ const Chart: FC = () => {
     y: entry.value,
   }))
 
-  // Auto-select the first available key if none selected
+  // Auto-select the first available key if none selected or if selectedKey is not in keys
   useEffect(() => {
-    const keys = deviceData.getDataKeys()
-    if (keys.length > 0 && !keys.includes(selectedKey)) {
-      setSelectedKey(keys[0])
+    if (dataKeys.length === 0) {
+      if (selectedKey !== '') setSelectedKey('')
+    } else if (!dataKeys.includes(selectedKey)) {
+      setSelectedKey(dataKeys[0])
     }
-  }, [deviceData.getDataKeys(), selectedKey])
+  }, [dataKeys, selectedKey])
 
   const chartData = {
     datasets: [
@@ -169,7 +171,7 @@ const Chart: FC = () => {
               label="Data Key"
               onChange={e => setSelectedKey(e.target.value)}
             >
-              {deviceData.getDataKeys().map(key => (
+              {dataKeys.map(key => (
                 <MenuItem key={key} value={key}>
                   {key} ({deviceData.getDataCountForKey(key)} pts)
                 </MenuItem>

@@ -1,6 +1,6 @@
 import ConnectionControl from '@/components/ConnectionControl'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { Close, Home, Info, Menu, Terminal, Timeline } from '@mui/icons-material'
+import { Close, Home, Info, Menu, Terminal } from '@mui/icons-material'
 import {
   AppBar,
   Box,
@@ -32,9 +32,8 @@ const Header: FC<HeaderProps> = ({ onConnectionChange }) => {
 
   const navigationItems = [
     { to: '/', label: 'Home', icon: <Home /> },
-    { to: '/about', label: 'About', icon: <Info /> },
     { to: '/terminal', label: 'Terminal', icon: <Terminal /> },
-    { to: '/chart', label: 'Chart', icon: <Timeline /> },
+    { to: '/about', label: 'About', icon: <Info /> },
   ]
 
   const handleMobileMenuToggle = () => {
