@@ -1,3 +1,4 @@
+import { errorNotificationSystem } from '@/utils/errorNotification'
 import { Buffer } from 'buffer'
 import { BaseStream } from './BaseStream.ts'
 
@@ -24,13 +25,12 @@ export class WebBLEStream extends BaseStream {
     this.device = device
     // Initialize after setting up properties
     this.initialize().catch(error => {
-      console.error('WebBLEStream initialization failed:', error)
+      errorNotificationSystem.notifyConnectionError('ble', error as Error)
     })
   }
 
   protected async initializeConnection(): Promise<void> {
     try {
-      console.log('WebBLEStream initializeConnection called')
       // Add disconnect event listener
       this.device.addEventListener('gattserverdisconnected', this.onDisconnected.bind(this))
 
@@ -51,9 +51,7 @@ export class WebBLEStream extends BaseStream {
       )
 
       this.isInitialized = true
-      console.log('WebBLEStream initialized successfully')
     } catch (error) {
-      console.error('WebBLEStream initialization error:', error)
       throw new WebBLEError(`Cannot initialize BLE connection: ${error}`)
     }
   }
@@ -81,11 +79,9 @@ export class WebBLEStream extends BaseStream {
   }
 
   private onDataReceived(event: Event): void {
-    console.log('WebBLEStream onDataReceived called')
     const target = event.target as BluetoothRemoteGATTCharacteristic
     const { value } = target
     if (value) {
-      console.log('WebBLEStream received data:', value)
       this.handleData(Buffer.from(value.buffer))
     }
   }

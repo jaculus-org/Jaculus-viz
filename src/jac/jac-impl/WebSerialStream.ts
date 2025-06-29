@@ -1,3 +1,4 @@
+import { errorNotificationSystem } from '@/utils/errorNotification'
 import { Buffer } from 'buffer'
 import { BaseStream } from './BaseStream.ts'
 
@@ -18,12 +19,11 @@ export class WebSerialStream extends BaseStream {
     this.port = port
     // Initialize after setting up properties
     this.initialize().catch(error => {
-      console.error('WebSerialStream initialization failed:', error)
+      errorNotificationSystem.notifyConnectionError('serial', error as Error)
     })
   }
 
   protected async initializeConnection(): Promise<void> {
-    console.log('WebSerialStream initializeConnection called')
     const reader = this.port.readable?.getReader()
     if (!reader) throw new WebSerialError('Cannot open reader')
 
@@ -34,7 +34,6 @@ export class WebSerialStream extends BaseStream {
     this.writer = writer
 
     this.isInitialized = true
-    console.log('WebSerialStream initialized successfully')
 
     // Start the read routine
     this.startReadRoutine()
@@ -51,10 +50,8 @@ export class WebSerialStream extends BaseStream {
   }
 
   private startReadRoutine(): void {
-    console.log('WebSerialStream startReadRoutine called')
     const readRoutine = async () => {
       try {
-        console.log('WebSerialStream read routine started')
         while (this.isInitialized) {
           const { value, done } = await this.reader.read()
           if (done) {
@@ -62,12 +59,12 @@ export class WebSerialStream extends BaseStream {
             this.handleEnd()
             break
           } else {
-            console.log('WebSerialStream received data:', value)
             this.handleData(Buffer.from(value))
           }
         }
       } catch (error) {
         console.log('WebSerialStream read routine error:', error)
+        errorNotificationSystem.notifyConnectionError('serial', error as Error)
         this.handleError(error as Error)
       }
     }

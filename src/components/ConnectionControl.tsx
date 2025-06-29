@@ -70,9 +70,7 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
         variant: 'success',
       })
     } catch (e) {
-      const errorMessage =
-        e instanceof Error ? e.message : `Failed to connect via ${connectionType.toUpperCase()}`
-      enqueueSnackbar(errorMessage, { variant: 'error' })
+      // Error is already handled by StreamFactory, just log and cleanup
       console.error(`${connectionType} connection error:`, e)
     } finally {
       setIsConnecting(false)

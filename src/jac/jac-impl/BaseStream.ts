@@ -1,5 +1,6 @@
-import { Buffer } from 'buffer'
 import type { Duplex } from '@/jac/jac-tools/link/stream.ts'
+import { errorNotificationSystem } from '@/utils/errorNotification'
+import { Buffer } from 'buffer'
 
 export abstract class BaseStream implements Duplex {
   protected callbacks: {
@@ -10,11 +11,6 @@ export abstract class BaseStream implements Duplex {
 
   protected isInitialized: boolean = false
 
-  constructor() {
-    console.log('BaseStream constructor called')
-    // Don't initialize immediately - let subclasses call initialize when ready
-  }
-
   /**
    * Initialize the stream - must be called by subclasses after they're ready
    */
@@ -22,7 +18,7 @@ export abstract class BaseStream implements Duplex {
     try {
       await this.initializeConnection()
     } catch (error) {
-      console.error('BaseStream initialization error:', error)
+      errorNotificationSystem.notifyInitializationError('connection stream', error as Error)
       this.handleError(error as Error)
     }
   }
@@ -46,12 +42,8 @@ export abstract class BaseStream implements Duplex {
    * Handle incoming data from the transport layer
    */
   protected handleData(data: Buffer): void {
-    console.log('BaseStream handleData called with:', data.toString())
     if (this.callbacks['data']) {
-      console.log('BaseStream calling data callback')
       this.callbacks['data'](data)
-    } else {
-      console.log('BaseStream: no data callback registered')
     }
   }
 

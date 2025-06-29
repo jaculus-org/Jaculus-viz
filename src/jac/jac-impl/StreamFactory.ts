@@ -1,4 +1,5 @@
 import type { Duplex } from '@/jac/jac-tools/link/stream.ts'
+import { errorNotificationSystem } from '@/utils/errorNotification'
 import { NAME_PREFIX, SERVICE_UUID, WebBLEStream } from './WebBLEStream.ts'
 import { WebSerialStream } from './WebSerialStream.ts'
 
@@ -60,7 +61,9 @@ export class StreamFactory {
 
       return new WebSerialStream(port)
     } catch (error) {
-      throw new StreamFactoryError(`Failed to create Serial stream: ${error}`)
+      const errorMessage = `Failed to create Serial stream: ${error}`
+      errorNotificationSystem.notifyConnectionError('serial', error as Error)
+      throw new StreamFactoryError(errorMessage)
     }
   }
 
@@ -80,7 +83,9 @@ export class StreamFactory {
 
       return new WebBLEStream(device)
     } catch (error) {
-      throw new StreamFactoryError(`Failed to create BLE stream: ${error}`)
+      const errorMessage = `Failed to create BLE stream: ${error}`
+      errorNotificationSystem.notifyConnectionError('ble', error as Error)
+      throw new StreamFactoryError(errorMessage)
     }
   }
 

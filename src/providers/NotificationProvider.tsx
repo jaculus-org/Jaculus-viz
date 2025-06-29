@@ -1,10 +1,23 @@
+import { errorNotificationSystem } from '@/utils/errorNotification'
 import { Close } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
-import { SnackbarProvider, closeSnackbar } from 'notistack'
+import { SnackbarProvider, closeSnackbar, useSnackbar } from 'notistack'
 import type { FC, ReactNode } from 'react'
+import { useEffect } from 'react'
 
 interface NotificationProviderProps {
   children: ReactNode
+}
+
+const NotificationInitializer: FC = () => {
+  const { enqueueSnackbar } = useSnackbar()
+
+  useEffect(() => {
+    // Initialize the global error notification system
+    errorNotificationSystem.setEnqueueSnackbar(enqueueSnackbar)
+  }, [enqueueSnackbar])
+
+  return null
 }
 
 const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
@@ -25,6 +38,7 @@ const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
         </IconButton>
       )}
     >
+      <NotificationInitializer />
       {children}
     </SnackbarProvider>
   )
