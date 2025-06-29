@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 
 // Import the generated route tree
 import { DeviceProvider } from '@/context/device'
+import { DeviceDataProvider } from '@/context/deviceData'
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
@@ -23,7 +24,9 @@ createRoot(document.getElementById('root')!).render(
     <NotificationProvider>
       <ThemeProvider>
         <DeviceProvider>
-          <RouterProvider router={router} />
+          <DeviceDataProvider>
+            <RouterProvider router={router} />
+          </DeviceDataProvider>
         </DeviceProvider>
       </ThemeProvider>
     </NotificationProvider>

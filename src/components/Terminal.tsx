@@ -1,6 +1,9 @@
 import { useDevice } from '@/context/device/useDevice'
+import { useDeviceData } from '@/context/deviceData/useDeviceData'
 import {
   Clear,
+  Pause,
+  PlayArrow,
   Send,
   Terminal as TerminalIcon,
   VerticalAlignBottom,
@@ -37,6 +40,7 @@ export interface TerminalProps {
 const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
   const theme = useTheme()
   const { device } = useDevice()
+  const deviceData = useDeviceData(device)
   const { enqueueSnackbar } = useSnackbar()
   const [lines, setLines] = useState<TerminalLine[]>([])
   const [input, setInput] = useState('')
@@ -76,11 +80,11 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
     if (device) {
       addLine('System connected', 'output')
 
-      device.programOutput.onData(data => {
+      device.programOutput.onData((data: any) => {
         addLine(data.toString(), 'output')
       })
 
-      device.programError.onData(data => {
+      device.programError.onData((data: any) => {
         addLine(data.toString(), 'error')
       })
     } else {
@@ -214,6 +218,22 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title={deviceData.isPaused ? 'Resume data processing' : 'Pause data processing'}>
+            <IconButton
+              size="medium"
+              onClick={() => deviceData.setPaused(!deviceData.isPaused)}
+              sx={{
+                color: deviceData.isPaused
+                  ? theme.palette.warning.main
+                  : theme.palette.success.main,
+                '&:hover': {
+                  bgcolor: theme.palette.action.hover,
+                },
+              }}
+            >
+              {deviceData.isPaused ? <PlayArrow /> : <Pause />}
+            </IconButton>
+          </Tooltip>
           <Tooltip title={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}>
             <IconButton
               size="medium"
