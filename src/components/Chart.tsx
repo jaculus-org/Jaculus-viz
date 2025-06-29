@@ -1,16 +1,8 @@
 import { useDevice } from '@/context/device'
 import { useDeviceData } from '@/context/deviceData/useDeviceData'
+import { getURLParameter, updateURLParameter } from '@/utils/urlUtils.ts'
 import { Timeline } from '@mui/icons-material'
-import {
-  Alert,
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, Paper, Typography } from '@mui/material'
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -20,13 +12,14 @@ import {
   PointElement,
   Title,
   Tooltip,
+  type ChartOptions,
 } from 'chart.js'
+import autocolors from 'chartjs-plugin-autocolors'
 import zoomPlugin from 'chartjs-plugin-zoom'
-import type { FC } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { Line } from 'react-chartjs-2'
+import ChartContainer from './ChartContainer'
+import ChartKeySelector from './ChartKeySelector'
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -35,7 +28,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  zoomPlugin
+  zoomPlugin,
+  autocolors
 )
 
 interface DataPoint {
@@ -43,50 +37,56 @@ interface DataPoint {
   y: number
 }
 
-const Chart: FC = () => {
-  const { device } = useDevice()
+function Chart() {
+  const { device, connected } = useDevice()
   const deviceData = useDeviceData(device)
   const dataKeys = deviceData.getDataKeys()
-  const [selectedKey, setSelectedKey] = useState<string | number>(dataKeys[0] ?? '')
-  const [isConnected, setIsConnected] = useState(false)
+  const [selectedKeys, setSelectedKeys] = useState<(string | number)[]>(
+    dataKeys.length > 0 ? [dataKeys[0]] : []
+  )
   const chartRef = useRef<ChartJS<'line', DataPoint[], number>>(null)
 
-  // Handle device connection
-  useEffect(() => {
-    setIsConnected(!!device)
-  }, [device])
-
-  // Get data for the selected key
-  const dataForKey = deviceData.getDataForKey(selectedKey)
-  const dataPoints: DataPoint[] = dataForKey.map(entry => ({
-    x: entry.timestamp,
-    y: entry.value,
-  }))
-
-  // Auto-select the first available key if none selected or if selectedKey is not in keys
-  useEffect(() => {
-    if (dataKeys.length === 0) {
-      if (selectedKey !== '') setSelectedKey('')
-    } else if (!dataKeys.includes(selectedKey)) {
-      setSelectedKey(dataKeys[0])
+  const datasets = selectedKeys.map(key => {
+    const dataForKey = deviceData.getDataForKey(key)
+    const dataPoints: DataPoint[] = dataForKey.map(entry => ({
+      x: entry.timestamp,
+      y: entry.value,
+    }))
+    return {
+      label: `Key: ${key}`,
+      data: dataPoints,
+      borderWidth: 2,
+      pointRadius: 1,
+      tension: 0.1,
     }
-  }, [dataKeys, selectedKey])
+  })
+
+  // Load selectedKeys from URL on mount
+  useEffect(() => {
+    const urlKeys = getURLParameter('keys')
+    if (urlKeys) {
+      const keys = urlKeys.split(',').filter((k: string | number) => dataKeys.includes(k))
+      if (keys.length > 0) setSelectedKeys(keys)
+    } else {
+      setSelectedKeys(dataKeys.length > 0 ? [dataKeys[0]] : [])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataKeys.join(',')])
+
+  // Update URL when selectedKeys change
+  useEffect(() => {
+    if (selectedKeys.length > 0) {
+      updateURLParameter('keys', selectedKeys.join(','))
+    } else {
+      updateURLParameter('keys', '')
+    }
+  }, [selectedKeys])
 
   const chartData = {
-    datasets: [
-      {
-        label: `Data Stream - Key: ${selectedKey}`,
-        data: dataPoints,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderWidth: 2,
-        pointRadius: 1,
-        tension: 0.1,
-      },
-    ],
+    datasets,
   }
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -112,6 +112,9 @@ const Chart: FC = () => {
           mode: 'xy' as const,
         },
       },
+      autocolors: {
+        mode: 'dataset' as const,
+      },
     },
     scales: {
       x: {
@@ -135,7 +138,7 @@ const Chart: FC = () => {
     },
   }
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <Box sx={{ p: 3 }}>
         <Paper
@@ -155,6 +158,17 @@ const Chart: FC = () => {
     )
   }
 
+  const ITEM_HEIGHT = 48
+  const ITEM_PADDING_TOP = 8
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  }
+
   return (
     <Box sx={{ p: 3, height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -162,30 +176,23 @@ const Chart: FC = () => {
           <Timeline sx={{ fontSize: '1.8rem' }} />
           Real-time Data Chart
         </Typography>
-
-        {deviceData.getDataKeys().length > 0 && (
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Data Key</InputLabel>
-            <Select
-              value={selectedKey}
-              label="Data Key"
-              onChange={e => setSelectedKey(e.target.value)}
-            >
-              {dataKeys.map(key => (
-                <MenuItem key={key} value={key}>
-                  {key} ({deviceData.getDataCountForKey(key)} pts)
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {dataKeys.length > 0 && (
+          <ChartKeySelector
+            dataKeys={dataKeys}
+            selectedKeys={selectedKeys}
+            onChange={setSelectedKeys}
+            getDataCountForKey={deviceData.getDataCountForKey}
+            MenuProps={MenuProps}
+          />
         )}
       </Box>
-
-      <Paper sx={{ flex: 1, p: 2, borderRadius: 2, overflow: 'hidden' }}>
-        <Box sx={{ height: '100%' }}>
-          <Line ref={chartRef} data={chartData} options={chartOptions} />
-        </Box>
-      </Paper>
+      <ChartContainer
+        chartData={chartData}
+        chartOptions={chartOptions}
+        chartRef={chartRef}
+        chartKey={(connected ? 'connected' : 'disconnected') + '-' + selectedKeys.join(',')}
+      />
+      {/* NOTE: Make sure you have 'react-router-dom' and '@types/react-router-dom' installed in your project. */}
     </Box>
   )
 }

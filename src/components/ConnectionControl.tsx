@@ -1,5 +1,6 @@
 import { useDevice } from '@/context/device/useDevice'
 import { useDeviceData } from '@/context/deviceData/useDeviceData'
+import { restartDevice } from '@/jac/jac-helpers'
 import {
   StreamFactory,
   type ConnectionType as StreamConnectionType,
@@ -12,11 +13,10 @@ import DisconnectButton from '@/ui/button/DisconnectButton'
 import PauseResumeButton from '@/ui/button/PauseResumeButton'
 import RestartButton from '@/ui/button/RestartButton'
 import ConnectionTypeSelect from '@/ui/select/ConnectionTypeSelect'
+import { getURLParameter, updateURLParameter } from '@/utils/urlUtils.ts'
 import { useSnackbar } from 'notistack'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import { getURLParameter, updateURLParameter } from '@/utils/urlUtils.ts'
-import { restartDevice } from '@/jac/jac-helpers'
 
 type ConnectionType = StreamConnectionType
 

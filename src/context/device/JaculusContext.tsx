@@ -1,7 +1,7 @@
+import type { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { DeviceContext } from './DeviceContext'
-import type { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 
 interface DeviceProps {
   children: ReactNode
@@ -13,6 +13,7 @@ export default function DeviceProvider({ children }: DeviceProps) {
 
   useEffect(() => {
     console.log('DeviceProvider: ', device)
+    setConnected(!!device)
   }, [device])
 
   const setNewDevice = (newDevice: JacDevice | null) => {
@@ -20,6 +21,7 @@ export default function DeviceProvider({ children }: DeviceProps) {
       device.destroy()
     }
     setDevice(newDevice)
+    setConnected(!!newDevice)
   }
 
   const disconnectDevice = () => {
@@ -27,6 +29,7 @@ export default function DeviceProvider({ children }: DeviceProps) {
       device.destroy()
     }
     setDevice(null)
+    setConnected(false)
   }
 
   return (

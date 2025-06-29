@@ -10,7 +10,10 @@ interface DeviceDataProviderProps {
   maxEntriesPerKey?: number
 }
 
-export function DeviceDataProvider({ children, maxEntriesPerKey = 1000 }: DeviceDataProviderProps) {
+export function DeviceDataProvider({
+  children,
+  maxEntriesPerKey = 100000,
+}: DeviceDataProviderProps) {
   const { device } = useDevice()
   const [data, setData] = useState<Map<string | number, ParsedDataEntry[]>>(new Map())
   const [isPaused, setIsPaused] = useState(false)

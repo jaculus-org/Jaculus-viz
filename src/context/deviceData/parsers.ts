@@ -44,8 +44,8 @@ export class DefaultDataParser implements DataParser {
         for (const part of parts) {
           if (!part) continue
 
-          // Match key-value pairs
-          const match = part.match(/^([a-zA-Z_][a-zA-Z0-9_]*):\s*(-?\d+(\.\d+)?)$/)
+          // Match key-value pairs (allow optional whitespace before/after key and colon)
+          const match = part.match(/^\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*(-?\d+(\.\d+)?)\s*$/)
           if (match) {
             const [, key, valueStr] = match
             const value = parseFloat(valueStr)
