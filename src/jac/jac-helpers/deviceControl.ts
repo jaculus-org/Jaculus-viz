@@ -1,5 +1,5 @@
 import type { JacDevice } from '@/jac/jac-tools/device/jacDevice'
-import { delay, withTimeout } from './timeoutUtils'
+import { delay, withTimeout } from '@/utils/timeoutUtils.ts'
 
 export interface DeviceRestartOptions {
   /** Timeout for lock operation in milliseconds (default: 3000) */
