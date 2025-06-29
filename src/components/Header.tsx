@@ -1,6 +1,6 @@
 import ConnectionControl from '@/components/ConnectionControl'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { Home, Info, Terminal } from '@mui/icons-material'
+import { Home, Info, Terminal, Timeline } from '@mui/icons-material'
 import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material'
 import { Link } from '@tanstack/react-router'
 import type { FC } from 'react'
@@ -44,6 +44,15 @@ const Header: FC<HeaderProps> = ({ onConnectionChange }) => {
             sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
           >
             Terminal
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/chart"
+            startIcon={<Timeline />}
+            sx={{ '&.active': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }}
+          >
+            Chart
           </Button>
         </Box>
 
