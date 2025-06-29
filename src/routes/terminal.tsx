@@ -9,7 +9,7 @@ export const Route = createFileRoute('/terminal')({
 function TerminalPage() {
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h2" sx={{ mb: 2 }}>
+      <Typography variant="h1" gutterBottom>
         Terminal
       </Typography>
       <Terminal height="calc(100vh - 180px)" />

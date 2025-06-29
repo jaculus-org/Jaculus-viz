@@ -17,7 +17,6 @@ function ConnectButton({ onClick, disabled, isConnecting, children }: ConnectBut
       onClick={onClick}
       disabled={disabled}
       startIcon={<PowerSettingsNew />}
-      size="small"
       sx={{
         '&:hover': {
           backgroundColor: 'primary.dark',

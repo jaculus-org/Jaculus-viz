@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
 function ChartPage() {
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h2" sx={{ mb: 2 }}>
+      <Typography variant="h1" gutterBottom>
         Chart
       </Typography>
       <Chart />
