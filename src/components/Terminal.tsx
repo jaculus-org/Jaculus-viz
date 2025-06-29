@@ -1,21 +1,9 @@
 import { useDevice } from '@/context/device/useDevice'
-import {
-  Clear,
-  Send,
-  Terminal as TerminalIcon,
-  VerticalAlignBottom,
-  VerticalAlignBottomOutlined,
-} from '@mui/icons-material'
-import {
-  Alert,
-  Box,
-  Divider,
-  IconButton,
-  Paper,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import TerminalHeader from '@/ui/terminal/TerminalHeader'
+import TerminalInput from '@/ui/terminal/TerminalInput'
+import TerminalOutput from '@/ui/terminal/TerminalOutput'
+import TerminalIcon from '@mui/icons-material/Terminal'
+import { Alert, Divider, Paper } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { Buffer } from 'buffer'
 import { useSnackbar } from 'notistack'
@@ -189,195 +177,26 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
         boxShadow: theme.shadows[4],
       }}
     >
-      {/* Header */}
-      <Box
-        sx={{
-          p: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <TerminalIcon sx={{ color: theme.palette.primary.main, fontSize: '1.5rem' }} />
-          <Typography
-            variant="h6"
-            sx={{
-              color: theme.palette.text.primary,
-              fontWeight: 600,
-            }}
-          >
-            Terminal
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Tooltip title={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}>
-            <IconButton
-              size="medium"
-              onClick={toggleAutoScroll}
-              sx={{
-                color: autoScroll ? theme.palette.primary.main : theme.palette.text.secondary,
-                '&:hover': {
-                  bgcolor: theme.palette.action.hover,
-                },
-              }}
-            >
-              {autoScroll ? <VerticalAlignBottom /> : <VerticalAlignBottomOutlined />}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Clear terminal">
-            <IconButton
-              size="medium"
-              onClick={clearTerminal}
-              sx={{
-                color: theme.palette.text.secondary,
-                '&:hover': {
-                  bgcolor: theme.palette.action.hover,
-                },
-              }}
-            >
-              <Clear />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
-
-      {/* Terminal Output */}
-      <Box
-        sx={{
-          flex: 1,
-          overflow: 'auto',
-          p: 2,
-          bgcolor: theme.palette.mode === 'dark' ? '#0d1117' : '#f8f9fa',
-          fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
-          fontSize: '15px',
-          lineHeight: 1.5,
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: theme.palette.mode === 'dark' ? '#21262d' : '#e1e4e8',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: theme.palette.mode === 'dark' ? '#484f58' : '#c1c8cd',
-            borderRadius: '4px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            background: theme.palette.mode === 'dark' ? '#5a6269' : '#a8b3ba',
-          },
-        }}
-      >
-        {lines.map(line => (
-          <Box
-            key={line.id}
-            sx={{
-              display: 'flex',
-              mb: 1,
-              color: getLineColor(line.type),
-              '&:hover': {
-                bgcolor:
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(255, 255, 255, 0.02)'
-                    : 'rgba(0, 0, 0, 0.02)',
-              },
-            }}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.disabled,
-                mr: 2,
-                minWidth: '70px',
-                fontFamily: 'inherit',
-                fontSize: '13px',
-                alignSelf: 'flex-start',
-                mt: 0.2,
-              }}
-            >
-              {formatTimestamp(line.timestamp)}
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: 'inherit',
-                fontSize: '15px',
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                flex: 1,
-              }}
-            >
-              {line.text}
-            </Typography>
-          </Box>
-        ))}
-        <div ref={terminalEndRef} />
-      </Box>
-
+      <TerminalHeader
+        autoScroll={autoScroll}
+        onToggleAutoScroll={toggleAutoScroll}
+        onClear={clearTerminal}
+      />
+      <TerminalOutput
+        lines={lines}
+        getLineColor={getLineColor}
+        formatTimestamp={formatTimestamp}
+        terminalEndRef={terminalEndRef as React.RefObject<HTMLDivElement>}
+      />
       <Divider />
-
-      {/* Input */}
-      <Box
-        sx={{
-          p: 2,
-          display: 'flex',
-          gap: 2,
-          bgcolor: theme.palette.background.paper,
-          borderTop: `1px solid ${theme.palette.divider}`,
-        }}
-      >
-        <TextField
-          ref={inputRef}
-          fullWidth
-          size="medium"
-          variant="outlined"
-          placeholder="Enter command and press Enter..."
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          disabled={!isConnected}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
-              fontSize: '15px',
-              bgcolor:
-                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-              '&:hover': {
-                bgcolor:
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(255, 255, 255, 0.08)'
-                    : 'rgba(0, 0, 0, 0.04)',
-              },
-              '&.Mui-focused': {
-                bgcolor:
-                  theme.palette.mode === 'dark'
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(0, 0, 0, 0.06)',
-              },
-            },
-          }}
-        />
-        <IconButton
-          color="primary"
-          onClick={handleSendCommand}
-          disabled={!input.trim() || !isConnected}
-          size="large"
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            '&:hover': {
-              bgcolor: theme.palette.primary.dark,
-            },
-            '&:disabled': {
-              bgcolor: theme.palette.action.disabledBackground,
-              color: theme.palette.action.disabled,
-            },
-          }}
-        >
-          <Send />
-        </IconButton>
-      </Box>
+      <TerminalInput
+        input={input}
+        setInput={setInput}
+        onSend={handleSendCommand}
+        onKeyPress={handleKeyPress}
+        inputRef={inputRef as React.RefObject<HTMLInputElement>}
+        isConnected={isConnected}
+      />
     </Paper>
   )
 }
