@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import type { FC } from 'react'
 
 export interface TerminalLine {
   id: string
@@ -16,12 +15,12 @@ interface TerminalOutputProps {
   terminalEndRef: React.RefObject<HTMLDivElement>
 }
 
-const TerminalOutput: FC<TerminalOutputProps> = ({
+function TerminalOutput({
   lines,
   getLineColor,
   formatTimestamp,
   terminalEndRef,
-}) => {
+}: TerminalOutputProps) {
   const theme = useTheme()
   return (
     <Box

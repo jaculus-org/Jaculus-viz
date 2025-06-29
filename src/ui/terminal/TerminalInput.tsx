@@ -1,7 +1,7 @@
 import { Send } from '@mui/icons-material'
 import { Box, IconButton, TextField } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import type { FC, RefObject } from 'react'
+import type { RefObject } from 'react'
 
 interface TerminalInputProps {
   input: string
@@ -12,14 +12,14 @@ interface TerminalInputProps {
   isConnected: boolean
 }
 
-const TerminalInput: FC<TerminalInputProps> = ({
+function TerminalInput({
   input,
   setInput,
   onSend,
   onKeyPress,
   inputRef,
   isConnected,
-}) => {
+}: TerminalInputProps) {
   const theme = useTheme()
   return (
     <Box

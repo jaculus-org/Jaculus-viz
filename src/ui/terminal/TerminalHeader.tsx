@@ -6,7 +6,6 @@ import {
 } from '@mui/icons-material'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import type { FC } from 'react'
 
 interface TerminalHeaderProps {
   autoScroll: boolean
@@ -14,7 +13,7 @@ interface TerminalHeaderProps {
   onClear: () => void
 }
 
-const TerminalHeader: FC<TerminalHeaderProps> = ({ autoScroll, onToggleAutoScroll, onClear }) => {
+function TerminalHeader({ autoScroll, onToggleAutoScroll, onClear }: TerminalHeaderProps) {
   const theme = useTheme()
   return (
     <Box

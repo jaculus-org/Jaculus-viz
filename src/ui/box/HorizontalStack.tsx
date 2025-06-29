@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface HorizontalStackProps {
   children: ReactNode
@@ -7,10 +7,8 @@ interface HorizontalStackProps {
   alignItems?: string
 }
 
-const HorizontalStack: FC<HorizontalStackProps> = ({
-  children,
-  gap = 2,
-  alignItems = 'center',
-}) => <Box sx={{ display: 'flex', alignItems, gap }}>{children}</Box>
+function HorizontalStack({ children, gap = 2, alignItems = 'center' }: HorizontalStackProps) {
+  return <Box sx={{ display: 'flex', alignItems, gap }}>{children}</Box>
+}
 
 export default HorizontalStack

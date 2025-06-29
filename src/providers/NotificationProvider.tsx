@@ -20,7 +20,7 @@ const NotificationInitializer: FC = () => {
   return null
 }
 
-const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
+export default function NotificationProvider({ children }: NotificationProviderProps) {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -43,5 +43,3 @@ const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
     </SnackbarProvider>
   )
 }
-
-export default NotificationProvider
