@@ -3,6 +3,7 @@ import { useDeviceData } from '@/context/deviceData/useDeviceData'
 import { getURLParameter, updateURLParameter } from '@/utils/urlUtils.ts'
 import { Timeline } from '@mui/icons-material'
 import { Alert, Box, Paper, Typography } from '@mui/material'
+import type { MenuProps as MuiMenuProps } from '@mui/material/Menu'
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -19,7 +20,6 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 import { useEffect, useRef, useState } from 'react'
 import ChartContainer from './ChartContainer'
 import ChartKeySelector from './ChartKeySelector'
-import type { MenuProps as MuiMenuProps } from '@mui/material/Menu'
 
 ChartJS.register(
   CategoryScale,
