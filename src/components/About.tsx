@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material'
 import { TsCodeExample } from '@/ui/code/TsCodeExample.tsx'
+import { Box, Typography } from '@mui/material'
 
 export function About() {
   return (

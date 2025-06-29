@@ -1,13 +1,14 @@
 import { Close } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface NotificationProviderProps {
   children: ReactNode
 }
 
-const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
+// const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
+export default function NotificationProvider({ children }: NotificationProviderProps) {
   return (
     <SnackbarProvider
       maxSnack={3}
@@ -29,5 +30,3 @@ const NotificationProvider: FC<NotificationProviderProps> = ({ children }) => {
     </SnackbarProvider>
   )
 }
-
-export default NotificationProvider

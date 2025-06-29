@@ -18,14 +18,13 @@ import {
   useTheme,
 } from '@mui/material'
 import { Link } from '@tanstack/react-router'
-import type { FC } from 'react'
 import { useState } from 'react'
 
 export interface HeaderProps {
   onConnectionChange?: (connected: boolean) => void
 }
 
-const Header: FC<HeaderProps> = ({ onConnectionChange }) => {
+export default function Header({ onConnectionChange }: HeaderProps) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -144,5 +143,3 @@ const Header: FC<HeaderProps> = ({ onConnectionChange }) => {
     </>
   )
 }
-
-export default Header

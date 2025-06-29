@@ -58,7 +58,7 @@ export const restartDevice = async (
   }
 
   try {
-    // Step 1: Lock device
+    // Lock device
     try {
       await withTimeout(device.controller.lock(), lockTimeout)
       result.steps.lock = true
@@ -67,19 +67,17 @@ export const restartDevice = async (
       // Continue even if lock fails - device might already be locked
     }
 
-    // Step 2: Stop device
+    // Stop device
     try {
       await withTimeout(device.controller.stop(), stopTimeout)
       result.steps.stop = true
     } catch (err) {
       console.warn('Stop timeout:', err)
-      // Continue even if stop fails
     }
 
-    // Wait a moment before starting
     await delay(restartDelay)
 
-    // Step 3: Start device
+    // Start device
     try {
       await withTimeout(device.controller.start(startScript), startTimeout)
       result.steps.start = true
@@ -90,13 +88,12 @@ export const restartDevice = async (
       result.message = 'Device restart may have failed - check device status'
     }
 
-    // Step 4: Unlock device (always try to unlock)
+    // Unlock device
     try {
       await withTimeout(device.controller.unlock(), unlockTimeout)
       result.steps.unlock = true
     } catch (err) {
       console.warn('Unlock timeout:', err)
-      // Device might auto-unlock, so this isn't critical
     }
 
     return result
@@ -104,12 +101,11 @@ export const restartDevice = async (
     console.error('Restart error:', error)
     result.message = 'Error during device restart'
 
-    // Try to unlock as cleanup
     try {
       await withTimeout(device.controller.unlock(), 2000)
       result.steps.unlock = true
     } catch {
-      // Ignore unlock errors during cleanup
+      // intentionally empty: unlock failure is non-fatal here
     }
 
     return result

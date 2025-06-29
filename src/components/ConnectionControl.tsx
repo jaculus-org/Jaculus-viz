@@ -15,7 +15,6 @@ import RestartButton from '@/ui/button/RestartButton'
 import ConnectionTypeSelect from '@/ui/select/ConnectionTypeSelect'
 import { getURLParameter, updateURLParameter } from '@/utils/urlUtils.ts'
 import { useSnackbar } from 'notistack'
-import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 
 type ConnectionType = StreamConnectionType
@@ -24,7 +23,7 @@ export interface ConnectionControlProps {
   onConnectionChange?: (connected: boolean) => void
 }
 
-const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) => {
+export default function ConnectionControl({ onConnectionChange }: ConnectionControlProps) {
   const { setNewDevice, disconnectDevice, device } = useDevice()
   const deviceData = useDeviceData(device)
   const { enqueueSnackbar } = useSnackbar()
@@ -141,5 +140,3 @@ const ConnectionControl: FC<ConnectionControlProps> = ({ onConnectionChange }) =
     </HorizontalStack>
   )
 }
-
-export default ConnectionControl

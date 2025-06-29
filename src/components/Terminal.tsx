@@ -7,7 +7,6 @@ import { Alert, Divider, Paper } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { Buffer } from 'buffer'
 import { useSnackbar } from 'notistack'
-import type { FC } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface TerminalLine {
@@ -22,7 +21,7 @@ export interface TerminalProps {
   height?: number | string
 }
 
-const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
+export default function Terminal({ maxLines = 5000, height = '170vh' }: TerminalProps) {
   const theme = useTheme()
   const { device } = useDevice()
   const { enqueueSnackbar } = useSnackbar()
@@ -64,11 +63,11 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
     if (device) {
       addLine('System connected', 'output')
 
-      device.programOutput.onData((data: any) => {
+      device.programOutput.onData((data: string | Buffer | Uint8Array) => {
         addLine(data.toString(), 'output')
       })
 
-      device.programError.onData((data: any) => {
+      device.programError.onData((data: string | Buffer | Uint8Array) => {
         addLine(data.toString(), 'error')
       })
     } else {
@@ -200,5 +199,3 @@ const Terminal: FC<TerminalProps> = ({ maxLines = 5000, height = '170vh' }) => {
     </Paper>
   )
 }
-
-export default Terminal

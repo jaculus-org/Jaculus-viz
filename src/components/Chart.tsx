@@ -19,6 +19,7 @@ import zoomPlugin from 'chartjs-plugin-zoom'
 import { useEffect, useRef, useState } from 'react'
 import ChartContainer from './ChartContainer'
 import ChartKeySelector from './ChartKeySelector'
+import type { MenuProps as MuiMenuProps } from '@mui/material/Menu'
 
 ChartJS.register(
   CategoryScale,
@@ -160,7 +161,7 @@ function Chart() {
 
   const ITEM_HEIGHT = 48
   const ITEM_PADDING_TOP = 8
-  const MenuProps = {
+  const MenuProps: Partial<MuiMenuProps> = {
     PaperProps: {
       style: {
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
