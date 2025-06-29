@@ -1,7 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import { fileURLToPath, URL } from 'node:url'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +14,20 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     react(),
+    {
+      name: 'copy-src-assets',
+      apply: 'build',
+      closeBundle() {
+        const src = path.resolve(__dirname, 'src/assets')
+        const dest = path.resolve(__dirname, 'dist/assets')
+        if (fs.existsSync(src)) {
+          fs.mkdirSync(dest, { recursive: true })
+          for (const file of fs.readdirSync(src)) {
+            fs.copyFileSync(path.join(src, file), path.join(dest, file))
+          }
+        }
+      },
+    },
   ],
   base: './',
   resolve: {
@@ -24,4 +40,15 @@ export default defineConfig({
       '@/assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // ...existing code...
+      },
+    },
+    // Copy static assets from src/assets to dist/assets
+    assetsDir: 'assets',
+    emptyOutDir: true,
+  },
+  publicDir: 'public',
 })
