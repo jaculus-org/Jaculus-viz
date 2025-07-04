@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TerminalRouteImport } from './routes/terminal'
+import { Route as MouseRouteImport } from './routes/mouse'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TerminalRoute = TerminalRouteImport.update({
   id: '/terminal',
   path: '/terminal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MouseRoute = MouseRouteImport.update({
+  id: '/mouse',
+  path: '/mouse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/mouse': typeof MouseRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/mouse': typeof MouseRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/mouse': typeof MouseRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$' | '/about' | '/terminal'
+  fullPaths: '/' | '/$' | '/about' | '/mouse' | '/terminal'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/about' | '/terminal'
-  id: '__root__' | '/' | '/$' | '/about' | '/terminal'
+  to: '/' | '/$' | '/about' | '/mouse' | '/terminal'
+  id: '__root__' | '/' | '/$' | '/about' | '/mouse' | '/terminal'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  MouseRoute: typeof MouseRoute
   TerminalRoute: typeof TerminalRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/terminal'
       fullPath: '/terminal'
       preLoaderRoute: typeof TerminalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mouse': {
+      id: '/mouse'
+      path: '/mouse'
+      fullPath: '/mouse'
+      preLoaderRoute: typeof MouseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  MouseRoute: MouseRoute,
   TerminalRoute: TerminalRoute,
 }
 export const routeTree = rootRouteImport
