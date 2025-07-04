@@ -1,6 +1,6 @@
 import ConnectionControl from '@/components/ConnectionControl'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { Close, Info, Menu, Terminal, Timeline } from '@mui/icons-material'
+import { BorderColor, Close, Info, Menu, Terminal, Timeline } from '@mui/icons-material'
 import {
   AppBar,
   Box,
@@ -33,6 +33,7 @@ export default function Header({ onConnectionChange }: HeaderProps) {
     { to: '/', label: 'Chart', icon: <Timeline /> },
     { to: '/terminal', label: 'Terminal', icon: <Terminal /> },
     { to: '/mouse', label: 'Space Mouse', icon: <Timeline /> },
+    { to: '/color', label: 'Color Box', icon: <BorderColor /> },
     { to: '/about', label: 'About', icon: <Info /> },
   ]
 
