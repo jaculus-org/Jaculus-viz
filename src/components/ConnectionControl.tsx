@@ -7,6 +7,7 @@ import {
 } from '@/jac/jac-impl/StreamFactory.ts'
 import { JacDevice } from '@/jac/jac-tools/device/jacDevice.ts'
 import HorizontalStack from '@/ui/box/HorizontalStack'
+import ClearDataButton from '@/ui/button/ClearDataButton'
 import ConnectButton from '@/ui/button/ConnectButton'
 import ConnectionIcon from '@/ui/button/ConnectionIcon'
 import DisconnectButton from '@/ui/button/DisconnectButton'
@@ -109,6 +110,11 @@ export default function ConnectionControl({ onConnectionChange }: ConnectionCont
     }
   }
 
+  const handleClearData = () => {
+    deviceData.clearData()
+    enqueueSnackbar('All stored data cleared', { variant: 'info' })
+  }
+
   return (
     <HorizontalStack>
       {device ? (
@@ -119,6 +125,7 @@ export default function ConnectionControl({ onConnectionChange }: ConnectionCont
             paused={deviceData.isPaused}
             onClick={() => deviceData.setPaused(!deviceData.isPaused)}
           />
+          <ClearDataButton onClick={handleClearData} />
           <RestartButton onClick={handleRestart} />
           <DisconnectButton onClick={handleDisconnect} />
         </>

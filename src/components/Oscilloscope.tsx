@@ -93,6 +93,14 @@ export default function Oscilloscope() {
     setDataHistory(newDataHistory)
   }, [deviceData, selectedKeys, maxDataPoints, deviceData.isPaused])
 
+  // Clear local data history when device data is cleared
+  useEffect(() => {
+    const totalDataCount = deviceData.getDataCount()
+    if (totalDataCount === 0) {
+      setDataHistory(new Map())
+    }
+  }, [deviceData.getDataCount()])
+
   const chartOption: EChartsOption = {
     title: {
       text: 'Real-time Data Chart',
