@@ -1,5 +1,5 @@
 import Chart from '@/components/Chart'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -9,9 +9,6 @@ export const Route = createFileRoute('/')({
 function ChartPage() {
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h1" gutterBottom>
-        Chart
-      </Typography>
       <Chart />
     </Box>
   )

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TerminalRouteImport } from './routes/terminal'
+import { Route as OscilloscopeRouteImport } from './routes/oscilloscope'
 import { Route as MouseRouteImport } from './routes/mouse'
 import { Route as ColorRouteImport } from './routes/color'
 import { Route as AboutRouteImport } from './routes/about'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TerminalRoute = TerminalRouteImport.update({
   id: '/terminal',
   path: '/terminal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OscilloscopeRoute = OscilloscopeRouteImport.update({
+  id: '/oscilloscope',
+  path: '/oscilloscope',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MouseRoute = MouseRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/color': typeof ColorRoute
   '/mouse': typeof MouseRoute
+  '/oscilloscope': typeof OscilloscopeRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/color': typeof ColorRoute
   '/mouse': typeof MouseRoute
+  '/oscilloscope': typeof OscilloscopeRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,37 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/color': typeof ColorRoute
   '/mouse': typeof MouseRoute
+  '/oscilloscope': typeof OscilloscopeRoute
   '/terminal': typeof TerminalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$' | '/about' | '/color' | '/mouse' | '/terminal'
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/color'
+    | '/mouse'
+    | '/oscilloscope'
+    | '/terminal'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/about' | '/color' | '/mouse' | '/terminal'
-  id: '__root__' | '/' | '/$' | '/about' | '/color' | '/mouse' | '/terminal'
+  to:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/color'
+    | '/mouse'
+    | '/oscilloscope'
+    | '/terminal'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/about'
+    | '/color'
+    | '/mouse'
+    | '/oscilloscope'
+    | '/terminal'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -86,6 +117,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ColorRoute: typeof ColorRoute
   MouseRoute: typeof MouseRoute
+  OscilloscopeRoute: typeof OscilloscopeRoute
   TerminalRoute: typeof TerminalRoute
 }
 
@@ -96,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/terminal'
       fullPath: '/terminal'
       preLoaderRoute: typeof TerminalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oscilloscope': {
+      id: '/oscilloscope'
+      path: '/oscilloscope'
+      fullPath: '/oscilloscope'
+      preLoaderRoute: typeof OscilloscopeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mouse': {
@@ -142,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ColorRoute: ColorRoute,
   MouseRoute: MouseRoute,
+  OscilloscopeRoute: OscilloscopeRoute,
   TerminalRoute: TerminalRoute,
 }
 export const routeTree = rootRouteImport

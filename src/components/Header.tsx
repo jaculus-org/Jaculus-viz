@@ -32,6 +32,7 @@ export default function Header({ onConnectionChange }: HeaderProps) {
   const navigationItems = [
     { to: '/', label: 'Chart', icon: <Timeline /> },
     { to: '/terminal', label: 'Terminal', icon: <Terminal /> },
+    { to: '/oscilloscope', label: 'Oscilloscope', icon: <Timeline /> },
     { to: '/mouse', label: 'Space Mouse', icon: <Timeline /> },
     { to: '/color', label: 'Color Box', icon: <BorderColor /> },
     { to: '/about', label: 'About', icon: <Info /> },

@@ -57,7 +57,7 @@ function Chart() {
       label: `Key: ${key}`,
       data: dataPoints,
       borderWidth: 2,
-      pointRadius: 1,
+      pointRadius: 2,
       tension: 0.1,
     }
   })
@@ -171,7 +171,7 @@ function Chart() {
   }
 
   return (
-    <Box sx={{ p: 3, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ p: 3, height: '85vh', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Timeline sx={{ fontSize: '1.8rem' }} />
